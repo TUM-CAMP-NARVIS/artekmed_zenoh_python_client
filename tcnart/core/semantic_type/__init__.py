@@ -119,10 +119,10 @@ class BaseType:
 
     @staticmethod
     def from_identifier(value: BaseIdentifierStorageType) -> "BaseType":
-        st = (value & constants.SCALAR_TYPE_MASK) >> constants.SCALAR_TYPE_OFFSET
-        cat = (value & constants.CARDINALITY_TYPE_MASK) >> constants.CARDINALITY_TYPE_OFFSET
-        ct = (value & constants.CONTAINER_TYPE_MASK) >> constants.CONTAINER_TYPE_OFFSET
-        mrt = (value & constants.MEMORY_REPRESENTATION_TYPE_MASK) >> constants.MEMORY_REPRESENTATION_TYPE_OFFSET
+        st = uint64(uint64(value) & constants.SCALAR_TYPE_MASK) >> constants.SCALAR_TYPE_OFFSET
+        cat = uint64(uint64(value) & constants.CARDINALITY_TYPE_MASK) >> constants.CARDINALITY_TYPE_OFFSET
+        ct = uint64(uint64(value) & constants.CONTAINER_TYPE_MASK) >> constants.CONTAINER_TYPE_OFFSET
+        mrt = uint64(uint64(value) & constants.MEMORY_REPRESENTATION_TYPE_MASK) >> constants.MEMORY_REPRESENTATION_TYPE_OFFSET
         return BaseType(
             scalar_type=ScalarType.from_u8(st) or ScalarType.None_,
             cardinality_type=CardinalityType.from_u8(cat) or CardinalityType.None_,
@@ -140,10 +140,10 @@ class BaseType:
         return BaseType(st, cat, ct, mrt)
 
     def base_type_identifier(self) -> BaseIdentifierStorageType:
-        st_value = (self.scalar_type.as_u8() & 0x3F) << constants.SCALAR_TYPE_OFFSET
-        cat_value = (self.cardinality_type.as_u8() & 0x03) << constants.CARDINALITY_TYPE_OFFSET
-        ct_value = (self.container_type.as_u8() & 0x3F) << constants.CONTAINER_TYPE_OFFSET
-        mrt_value = (self.memory_representation_type.as_u8() & 0x03) << constants.MEMORY_REPRESENTATION_TYPE_OFFSET
+        st_value = uint64(self.scalar_type.as_u8() & 0x3F) << constants.SCALAR_TYPE_OFFSET
+        cat_value = uint64(self.cardinality_type.as_u8() & 0x03) << constants.CARDINALITY_TYPE_OFFSET
+        ct_value = uint64(self.container_type.as_u8() & 0x3F) << constants.CONTAINER_TYPE_OFFSET
+        mrt_value = uint64(self.memory_representation_type.as_u8() & 0x03) << constants.MEMORY_REPRESENTATION_TYPE_OFFSET
         return int(st_value | cat_value | ct_value | mrt_value)
 
     def is_compatible(self, value: int) -> bool:
@@ -179,7 +179,7 @@ class SemanticType:
             self.base_type = BaseType()
             self.content_type: ContentTypeConfigStorage = InvalidContentConfig()
         else:
-            base_bits = semantic_type_id & constants.BASE_TYPE_MASK
+            base_bits = uint64(semantic_type_id) & constants.BASE_TYPE_MASK
             self.base_type = BaseType.from_identifier(base_bits)
             ct = get_content_type(semantic_type_id)
             self.content_type = _content_from_type_and_id(ct, semantic_type_id)
