@@ -14,8 +14,9 @@ session = zenoh.open(zenoh.Config.from_json5(open(zenoh_config).read()))
 class DbgHelper:
     def __init__(self, name):
         self.stream_name = name
-    def __call__(self, msg):
-        print(f"received message {msg}")
+    def __call__(self, args):
+        topic, msg = args
+        print(f"received message {topic} {msg}")
 
 dbg_helper = DbgHelper("dbg")
 

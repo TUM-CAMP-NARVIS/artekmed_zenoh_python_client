@@ -6,7 +6,7 @@ import logging
 
 import zenoh  # type: ignore
 
-from .common import _get_attachment, _extract_payload, _declare_subscriber
+from .common import _get_attachment, _extract_payload, _declare_subscriber, _get_topic
 from ..serialization.cdr_serialization import decode_raw_message
 from ..serialization.error import MessageError
 from ..schema.messages.srg_engine import SISJoinMessage
@@ -37,6 +37,7 @@ def sis_join_subscriber(
                 break
             if rx:
                 sample = rx.pop(0)
+                rcv_topic = _get_topic(sample)
                 type_name = _get_attachment(sample, default_type)
                 payload = _extract_payload(sample)
                 try:
@@ -47,11 +48,11 @@ def sis_join_subscriber(
 
                 # Dispatch to sender
                 if hasattr(sender, "put") and callable(getattr(sender, "put")):
-                    sender.put(msg)
+                    sender.put((rcv_topic, msg))
                 elif callable(sender):
-                    sender(msg)
+                    sender((rcv_topic, msg))
                 elif isinstance(sender, list):
-                    sender.append(msg)
+                    sender.append((rcv_topic, msg))
                 else:
                     # No valid sink; drop
                     log.warning(f"No valid sink for {topic}")
@@ -66,11 +67,11 @@ def sis_join_subscriber(
 
     # Send final invalid message to own worker index sink
     if hasattr(sender, "put") and callable(getattr(sender, "put")):
-        sender.put(InvalidMessage())
+        sender.put(("", InvalidMessage()))
     elif callable(sender):
-        sender(InvalidMessage())
+        sender(("", InvalidMessage()))
     elif isinstance(sender, list):
-        sender.append(InvalidMessage())
+        sender.append(("", InvalidMessage()))
 
 
 def start_sis_join_subscriber(

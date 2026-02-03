@@ -5,6 +5,9 @@ import logging
 from typing import Optional
 
 
+def _get_topic(sample: Any) -> str:
+    return str(getattr(sample, "key_expr", ""))
+
 def _get_attachment(sample: Any, default: str) -> str:
     # Try different attribute layouts depending on zenoh-python version
     att = getattr(sample, "attachment")
