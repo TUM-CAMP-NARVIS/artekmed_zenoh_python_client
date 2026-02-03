@@ -5,13 +5,14 @@ from tcnart.network.receiver import resolve_stream_descriptors, start_all_receiv
 from tcnart.core.semantic_type import SemanticType
 logging.basicConfig(level=logging.DEBUG)
 
-zenoh_config = "/Users/ecku/mydev/artekmed/zenoh_client_config/ueck_mobile/zenoh_config.json5"
+zenoh_config = "/Users/ecku/mydev/artekmed/zenoh_client_config/ueck_localrouter/zenoh_config.json5"
 topic_prefix = "tcn/loc/pcpd"
 
 zenoh.init_log_from_env_or("warn")
 session = zenoh.open(zenoh.Config.from_json5(open(zenoh_config).read()))
 
 cameras = find_camera_sensors(session, f"{topic_prefix}/k4a_capture_multi/rpc/sensor/*/describe")
+print(f"Discovered {len(cameras)} cameras")
 
 channels_config, channel_calibration, channel_poses = build_channel_configs(cameras)
 

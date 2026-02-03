@@ -6,6 +6,7 @@ import logging
 
 import zenoh  # type: ignore
 
+from .common import _get_attachment, _extract_payload, _declare_subscriber
 from ..serialization.cdr_serialization import decode_raw_message
 from ..serialization.error import MessageError
 from ..schema.messages.common import InvalidMessage
@@ -13,36 +14,6 @@ from ..core.frames import Frame, FrameAnnotation
 from ..core.dataflow import StreamConfig
 
 log = logging.getLogger(__name__)
-
-def _get_attachment(sample: Any, default: str) -> str:
-    # Try different attribute layouts depending on zenoh-python version
-    att = getattr(sample, "attachment")
-    try:
-        # some versions expose bytes/bytearray
-        if att is None:
-            return default
-        return att.to_string()
-    except Exception as e:
-        log.exception(e)
-    return default
-
-
-def _extract_payload(sample: Any) -> bytes:
-    try:
-        pay = getattr(sample, "payload")
-        if isinstance(pay, (bytes, bytearray)):
-            return bytes(pay)
-        elif isinstance(pay, zenoh.ZBytes):
-            return pay.to_bytes()
-    except Exception as e:
-        log.exception(e)
-        pass
-    return b""
-
-def _declare_subscriber(session: Any, key_expr: str, queue: List[Any]) -> Any:
-    def _cb(sample: Any) -> None:
-        queue.append(sample)
-    return session.declare_subscriber(key_expr, _cb)
 
 
 # Function to receive messages from Zenoh - synchronous distribution to workers

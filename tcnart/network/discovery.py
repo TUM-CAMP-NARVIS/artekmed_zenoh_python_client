@@ -5,6 +5,7 @@ import logging
 
 import zenoh  # type: ignore
 
+from .common import _get_attachment, _extract_payload, _declare_subscriber, _do_get
 from ..serialization.cdr_serialization import decode_raw_message, encode_raw_message
 from ..serialization.error import MessageError
 from ..schema.messages.rpc import NullRequest
@@ -18,47 +19,6 @@ from ..core.frames import FrameAnnotation
 
 log = logging.getLogger(__name__)
 
-# Helper to extract attachment/type name from a zenoh sample in a robust way across versions
-
-def _get_attachment(sample: Any, default: str) -> str:
-    # Try different attribute layouts depending on zenoh-python version
-    att = getattr(sample, "attachment")
-    try:
-        # some versions expose bytes/bytearray
-        if att is None:
-            return default
-        return att.to_string()
-    except Exception as e:
-        log.exception(e)
-    return default
-
-
-def _extract_payload(sample: Any) -> bytes:
-    try:
-        pay = getattr(sample, "payload")
-        if isinstance(pay, (bytes, bytearray)):
-            return bytes(pay)
-        elif isinstance(pay, zenoh.ZBytes):
-            return pay.to_bytes()
-    except Exception as e:
-        log.exception(e)
-        pass
-    return b""
-
-
-def _do_get(session: Any, key_expr: str, payload: Optional[bytes] = None) -> List[Any]:
-    out = []
-    for reply in session.get(key_expr, payload=payload, encoding=zenoh.Encoding.APPLICATION_CDR):
-        out.append(reply.ok)
-    return out
-
-
-def _declare_subscriber(session: Any, key_expr: str, queue: List[Any]) -> Any:
-    # Register callback that appends samples to the provided queue (acting as a ring buffer)
-    def _cb(sample: Any) -> None:
-        queue.append(sample)
-    sub = session.declare_subscriber(key_expr, _cb)
-    return sub
 
 
 # Public API
