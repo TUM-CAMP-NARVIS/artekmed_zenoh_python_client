@@ -1,5 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from numpy import uint8, uint64
 
 from .model import (
     constants,
@@ -23,19 +24,19 @@ class TransformContentConfig:
     def new(cls, value: int) -> "TransformContentConfig":
         cfg = cls()
         cfg.compression_type = TransformCompressionTypes.from_u8(
-            ((value & constants.COMPRESSION_TYPE_MASK) >> constants.COMPRESSION_TYPE_OFFSET)
+            ((uint64(value) & uint64(constants.COMPRESSION_TYPE_MASK)) >> uint8(constants.COMPRESSION_TYPE_OFFSET))
         )
         cfg.format_type = TransformFormatTypes.from_u8(
-            ((value & constants.FORMAT_TYPE_MASK) >> constants.FORMAT_TYPE_OFFSET)
+            ((uint64(value) & uint64(constants.FORMAT_TYPE_MASK)) >> uint8(constants.FORMAT_TYPE_OFFSET))
         )
         cfg.custom1_type = TransformDetailTypes.from_u8(
-            ((value & constants.CUSTOM1_TYPE_MASK) >> constants.CUSTOM1_TYPE_OFFSET)
+            ((uint64(value) & uint64(constants.CUSTOM1_TYPE_MASK)) >> uint8(constants.CUSTOM1_TYPE_OFFSET))
         )
         cfg.custom2_type = EmptyCustomType.from_u8(
-            ((value & constants.CUSTOM2_TYPE_MASK) >> constants.CUSTOM2_TYPE_OFFSET)
+            ((uint64(value) & uint64(constants.CUSTOM2_TYPE_MASK)) >> uint8(constants.CUSTOM2_TYPE_OFFSET))
         )
         cfg.custom_mask_type = EmptyMaskType.from_u8(
-            ((value & constants.CUSTOM_MASK_TYPE_MASK) >> constants.CUSTOM_MASK_TYPE_OFFSET)
+            ((uint64(value) & uint64(constants.CUSTOM_MASK_TYPE_MASK)) >> uint8(constants.CUSTOM_MASK_TYPE_OFFSET))
         )
         return cfg
 
