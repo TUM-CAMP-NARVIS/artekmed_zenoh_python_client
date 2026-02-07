@@ -95,8 +95,8 @@ def _content_storage_to_type(cfg: ContentTypeConfigStorage) -> ContentTypes:
     return ContentTypes.None_
 
 
-def _content_from_type_and_id(ct: ContentTypes, semantic_bits: uint32) -> ContentTypeConfigStorage:
-    masked = uint32(semantic_bits) & uint32(constants.SEMANTIC_TYPE_MASK)
+def _content_from_type_and_id(ct: ContentTypes, semantic_bits: uint64) -> ContentTypeConfigStorage:
+    masked = uint64(semantic_bits) & uint64(constants.SEMANTIC_TYPE_MASK)
     if ct == ContentTypes.Generic:
         return GenericContentConfig.from_u64(masked)
     if ct == ContentTypes.Image:

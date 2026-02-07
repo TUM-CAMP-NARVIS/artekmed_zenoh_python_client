@@ -50,15 +50,15 @@ class ImageContentConfig:
     def to_u64(self) -> uint64:
         value = uint64(0)
         if self.compression_type is not None:
-            value |= uint64(self.compression_type.as_u8()) << constants.COMPRESSION_TYPE_OFFSET
+            value |= uint64(self.compression_type.as_u8()) << uint8(constants.COMPRESSION_TYPE_OFFSET)
         if self.format_type is not None:
-            value |= uint64(self.format_type.as_u8()) << constants.FORMAT_TYPE_OFFSET
+            value |= uint64(self.format_type.as_u8()) << uint8(constants.FORMAT_TYPE_OFFSET)
         if self.custom1_type is not None:
-            value |= uint64(self.custom1_type.as_u8()) << constants.CUSTOM1_TYPE_OFFSET
+            value |= uint64(self.custom1_type.as_u8()) << uint8(constants.CUSTOM1_TYPE_OFFSET)
         if self.custom2_type is not None:
-            value |= uint64(self.custom2_type.as_u8()) << constants.CUSTOM2_TYPE_OFFSET
+            value |= uint64(self.custom2_type.as_u8()) << uint8(constants.CUSTOM2_TYPE_OFFSET)
         if self.custom_mask_type is not None:
-            value |= uint64(self.custom_mask_type.as_u8()) << constants.CUSTOM_MASK_TYPE_OFFSET
+            value |= uint64(self.custom_mask_type.as_u8()) << uint8(constants.CUSTOM_MASK_TYPE_OFFSET)
         return value
 
     # Getters

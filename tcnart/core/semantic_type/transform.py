@@ -51,15 +51,15 @@ class TransformContentConfig:
     def to_u64(self) -> int:
         value = 0
         if self.compression_type is not None:
-            value |= int(self.compression_type.as_u8()) << constants.COMPRESSION_TYPE_OFFSET
+            value |= int(self.compression_type.as_u8()) << uint8(constants.COMPRESSION_TYPE_OFFSET)
         if self.format_type is not None:
-            value |= int(self.format_type.as_u8()) << constants.FORMAT_TYPE_OFFSET
+            value |= int(self.format_type.as_u8()) << uint8(constants.FORMAT_TYPE_OFFSET)
         if self.custom1_type is not None:
-            value |= int(self.custom1_type.as_u8()) << constants.CUSTOM1_TYPE_OFFSET
+            value |= int(self.custom1_type.as_u8()) << uint8(constants.CUSTOM1_TYPE_OFFSET)
         if self.custom2_type is not None:
-            value |= int(self.custom2_type.as_u8()) << constants.CUSTOM2_TYPE_OFFSET
+            value |= int(self.custom2_type.as_u8()) << uint8(constants.CUSTOM2_TYPE_OFFSET)
         if self.custom_mask_type is not None:
-            value |= int(self.custom_mask_type.as_u8()) << constants.CUSTOM_MASK_TYPE_OFFSET
+            value |= int(self.custom_mask_type.as_u8()) << uint8(constants.CUSTOM_MASK_TYPE_OFFSET)
         return value
 
     # Getters
