@@ -65,7 +65,7 @@ ContentTypeConfigStorage = Union[
 
 
 def get_content_type(value: uint64) -> Optional[ContentTypes]:
-    ct_u8 = (value & uint64(constants.CONTENT_TYPE_MASK)) >> uint8(constants.CONTENT_TYPE_OFFSET)
+    ct_u8 = uint8((uint64(value) & uint64(constants.CONTENT_TYPE_MASK)) >> uint8(constants.CONTENT_TYPE_OFFSET))
     return ContentTypes.from_u8(ct_u8) or ContentTypes.None_
 
 def set_content_type(content_type: ContentTypes) -> uint64:
